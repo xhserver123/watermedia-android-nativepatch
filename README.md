@@ -1,8 +1,6 @@
 # WaterMedia Native Patch
 
-[![GitHub](https://img.shields.io/badge/GitHub-xhserver123%2Fwatermedia--nativepatch-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/xhserver123/watermedia-nativepatch)
-[![Website](https://img.shields.io/badge/Website-xhserver.qzz.io-0ea5e9?style=for-the-badge&logo=globe&logoColor=white)](https://xhserver.qzz.io)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+
 
 A Fabric mod that fixes WaterMedia's FFmpeg playback on platforms where its bundled
 native libraries cannot load — most notably **Android** (bionic linker).
