@@ -1,0 +1,12 @@
+# Build output
+build/
+release/
+*.class
+
+# Downloaded compile-time dependencies
+lib/*.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
