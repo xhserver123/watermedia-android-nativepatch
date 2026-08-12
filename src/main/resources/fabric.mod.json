@@ -9,8 +9,8 @@
   ],
   "contact": {
     "homepage": "https://xhserver.qzz.io",
-    "sources": "https://github.com/xhserver123/watermedia-nativepatch",
-    "issues": "https://github.com/xhserver123/watermedia-nativepatch/issues"
+    "sources": "https://github.com/xhserver123/watermedia-android-nativepatch",
+    "issues": "https://github.com/xhserver123/watermedia-android-nativepatch/issues"
   },
   "license": "MIT (code) / FFmpeg GPL-3.0 (bundled natives) / GPLv3+ GCC Runtime Library Exception (libstdc++/libgcc_s)",
   "environment": "*",
