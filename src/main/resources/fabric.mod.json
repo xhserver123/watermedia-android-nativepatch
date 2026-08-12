@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "watermedia-nativepatch",
+  "version": "1.0.0",
+  "name": "WaterMedia Native Patch",
+  "description": "Fixes WaterMedia FFmpeg on Android: replaces the glibc linux-arm64 natives with the android-arm64 (bionic) build of FFmpeg 8.0.1-gpl, preloads them into WaterMedia's extraction dir, and loads any .so dropped into <gameDir>/nativepatch/. Fixes 'dlopen failed ... in namespace clns-N'.",
+  "authors": [
+    "XHServer"
+  ],
+  "contact": {
+    "homepage": "https://xhserver.qzz.io",
+    "sources": "https://github.com/xhserver123/watermedia-nativepatch",
+    "issues": "https://github.com/xhserver123/watermedia-nativepatch/issues"
+  },
+  "license": "MIT (code) / FFmpeg GPL-3.0 (bundled natives) / GPLv3+ GCC Runtime Library Exception (libstdc++/libgcc_s)",
+  "environment": "*",
+  "entrypoints": {
+    "preLaunch": [
+      "wm.nativepatch.NativePatchLoader"
+    ],
+    "main": [
+      "wm.nativepatch.NativePatchLoader"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.14.0",
+    "minecraft": ">=1.18.2",
+    "java": ">=17"
+  }
+}
