@@ -1,0 +1,83 @@
+name: Build & Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g. v1.0.0). Leave empty to only upload the jar as an artifact.'
+        required: false
+        default: ''
+
+jobs:
+  build:
+    name: Build mod jar
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    # secrets 不能直接在 if: 中使用，这里先映射为 job 级环境变量
+    env:
+      MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build
+        run: |
+          chmod +x build.sh
+          ./build.sh
+
+      - name: Upload jar artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: watermedia-android-nativepatch-jars
+          path: release/watermedia-android-nativepatch-*.jar
+          if-no-files-found: error
+
+      # 发布到 Modrinth（仅当设置了 MODRINTH_TOKEN 时执行）
+      - name: Publish to Modrinth
+        if: ${{ env.MODRINTH_TOKEN != '' }}
+        uses: Kira-NT/mc-publish@v3
+        with:
+          # ---------- 必填项 ----------
+          modrinth-id: ${{ secrets.MODRINTH_PROJECT_ID }}  # 项目ID存为Secret
+          modrinth-token: ${{ env.MODRINTH_TOKEN }}
+
+          # 只上传编译后的主JAR（build.sh 只产出主JAR）
+          files: |
+            release/watermedia-android-nativepatch-*.jar
+
+          # ---------- 版本信息 ----------
+          # 版本号：优先使用输入的tag，去掉前缀v（如v1.0.0 -> 1.0.0）
+          version: ${{ github.event.inputs.tag != '' && github.event.inputs.tag || format('{0}+build.{1}', '0.0.0', github.run_number) }}
+          # 版本名称：默认与tag相同，或使用构建号（整体加双引号，避免 # 被 YAML 当作注释截断表达式）
+          version-name: "${{ github.event.inputs.tag != '' && github.event.inputs.tag || format('Build #{0}', github.run_number) }}"
+
+
+          changelog: ${{ github.event.inputs.tag != '' && format('See [release notes](https://github.com/{0}/releases/tag/{1})', github.repository, github.event.inputs.tag) || 'Manual build' }}
+
+          # ---------- 游戏环境和加载器（请根据模组实际情况修改） ----------
+          game-versions: |
+            1.18.2
+            26.2
+          loaders: |
+            fabric
+
+          # 发布类型：如果tag是预发布版（如包含-alpha/beta），则设为beta，否则release
+          version-type: ${{ contains(github.event.inputs.tag, 'alpha') || contains(github.event.inputs.tag, 'beta') && 'beta' || 'release' }}
+
+      # 创建 GitHub Release（与原来一致）
+      - name: Create GitHub Release
+        if: ${{ github.event.inputs.tag != '' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag }}
+          name: ${{ github.event.inputs.tag }}
+          files: release/watermedia-android-nativepatch-*.jar
+          generate_release_notes: true
